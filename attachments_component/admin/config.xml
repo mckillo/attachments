@@ -65,6 +65,13 @@
       <option value="0">JNO</option>
       <option value="1">JYES</option>
     </field>
+    <field name="hide_brackets_if_empty" type="radio" default="0" layout="joomla.form.field.radio.switcher"
+           label="ATTACH_HIDE_BRACKETS_IF_EMPTY"
+           description="ATTACH_HIDE_BRACKETS_IF_EMPTY_DESCRIPTION">
+      <option value="1">JYES</option>
+      <option value="0">JNO</option>
+    </field>
+
     <field name="show_creator_name" type="radio" default="0" layout="joomla.form.field.radio.switcher"
            label="ATTACH_SHOW_ATTACHMENT_CREATOR"
            description="ATTACH_SHOW_ATTACHMENT_CREATOR_DESCRIPTION">
@@ -188,11 +195,11 @@
            label="ATTACH_CSS_STYLE_FOR_ATTACHMENTS_TABLES" size="40"
            description="ATTACH_CSS_STYLE_FOR_ATTACHMENTS_TABLES_DESCRIPTION">
     </field>
-    <field name="file_link_open_mode" type="radio" default="in_same_window" layout="joomla.form.field.radio.switcher"
-           label="ATTACH_FILE_LINK_OPEN_MODE"
+    <field name="file_link_open_mode" type="list" default="in_same_window"
            description="ATTACH_FILE_LINK_OPEN_MODE_DESCRIPTION">
       <option value="new_window">ATTACH_IN_NEW_WINDOW</option>
       <option value="in_same_window">ATTACH_IN_SAME_WINDOW</option>
+      <option value="in_a_popup">ATTACH_IN_A_POPUP</option>
     </field>
     <field name="attachments_titles" type="textarea" default=""
            label="ATTACH_CUSTOM_TITLES_FOR_ATTACHMENTS_LISTS" rows="3" cols="60"

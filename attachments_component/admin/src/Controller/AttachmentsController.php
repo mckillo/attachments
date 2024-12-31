@@ -160,6 +160,9 @@ class AttachmentsController extends AdminController
         $model		= $this->getModel('Attachment');
         $attachment = $model->getTable();
 
+		// Load content plugin for onContentAfterDelete
+		PluginHelper::importPlugin('content');
+
 		if (count($cid))
 		{
 			// Loop through the attachments and delete them one-by-one
@@ -194,6 +197,13 @@ class AttachmentsController extends AdminController
 						AttachmentsHelper::clean_directory($attachment->filename_sys);
 					}
 					$deleted_ids[] = $id;
+
+					Factory::getApplication()->triggerEvent('onContentAfterDelete', [
+						'com_attachments.attachment',
+						$attachment,
+						null,
+						false
+					]);
 				}
 				else
 				{
@@ -257,7 +267,7 @@ class AttachmentsController extends AdminController
 			$uri = Uri::getInstance();
 			$base_url = $uri->base(true);
 			$lang = $input->getCmd('lang', '');
-			AttachmentsJavascript::closeIframeRefreshAttachments($base_url, $parent_type, $parent_entity, $pid, $lang, $from);
+			AttachmentsJavascript::closeIframeRefreshAttachments($base_url, $parent_type, $parent_entity, $pid, $lang, $from, false);
 			exit();
 		}
 
@@ -307,6 +317,13 @@ class AttachmentsController extends AdminController
 			}
 			else
 			{
+				PluginHelper::importPlugin('content');
+				$app->triggerEvent('onContentChangeState', [
+					'com_attachments.attachment',
+					$cid,
+					$value
+				]);
+				
 				if ($value == 1)
 				{
 					$ntext = $this->text_prefix . '_N_ITEMS_PUBLISHED';
