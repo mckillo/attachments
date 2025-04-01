@@ -70,7 +70,7 @@ class DisplayController extends BaseController
     {
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null || $user->id == 0 || !$user->authorise('core.create', 'com_attachments')){
+        if ($user === null || $user->id <= 0 || !$user->authorise('core.create', 'com_attachments')){
             throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 1)', 403);
         }
 
@@ -221,7 +221,7 @@ class DisplayController extends BaseController
 
         // Make sure that the user is logged in
         $user = $this->app->getIdentity();
-        if ($user === null || $user->id == 0 || !$user->authorise('core.create', 'com_attachments')){
+        if ($user === null || $user->id <= 0 || !$user->authorise('core.create', 'com_attachments')){
             throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 6)', 403);
         }
 
@@ -503,7 +503,7 @@ class DisplayController extends BaseController
     {
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null || $user->id == 0 || !$user->authorise('core.delete', 'com_attachments')){
+        if ($user === null || $user->id <= 0 || !$user->authorise('core.delete', 'com_attachments')){
             throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 66)', 403);
         }
 
@@ -631,7 +631,7 @@ class DisplayController extends BaseController
     {
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null || $user->id == 0 || !$user->authorise('core.delete', 'com_attachments')){
+        if ($user === null || $user->id <= 0 || !$user->authorise('core.delete', 'com_attachments')){
             throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 67)', 403);
         }
 
@@ -707,7 +707,7 @@ class DisplayController extends BaseController
 
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null || $user->id == 0 || !$user->authorise('core.edit', 'com_attachments')){
+        if ($user === null || $user->id <= 0 || !$user->authorise('core.edit', 'com_attachments')){
             throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 68)', 403);
         }
 
