@@ -220,6 +220,9 @@ class DisplayController extends BaseController
 
 		// Make sure that the user is logged in
 		$user = $this->app->getIdentity();
+        if ($user === null) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 67)', 404);
+        }
 
 		// Get the parameters
 		$params = ComponentHelper::getParams('com_attachments');
@@ -497,6 +500,12 @@ class DisplayController extends BaseController
 	 */
 	public function delete()
 	{
+        // Access check.
+        $user = $this->app->getIdentity();
+        if ($user === null) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 65)', 404);
+        }
+
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$input = $this->input;
 
@@ -619,6 +628,11 @@ class DisplayController extends BaseController
 	 */
 	public function delete_warning()
 	{
+        // Access check.
+        $user = $this->app->getIdentity();
+        if ($user === null) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 66)', 404);
+        }
 		$input = $this->input;
 		// Make sure we have a valid attachment ID
 		$attachment_id = $input->getInt('id');
@@ -689,6 +703,12 @@ class DisplayController extends BaseController
 		// Call with: index.php?option=com_attachments&task=update&id=1&tmpl=component
 		//		  or: component/attachments/update/id/1/tmpl/component
 
+        // Access check.
+        $user = $this->app->getIdentity();
+        if ($user === null) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 66)', 404);
+        }
+
 		$input = $this->input;
 
 		// Make sure we have a valid attachment ID
@@ -735,7 +755,6 @@ class DisplayController extends BaseController
 		$parent_entity_name = Text::_('ATTACH_' . $parent_entity);
 
 		// Verify that this user may add attachments to this parent
-		$user = $this->app->getIdentity();
 		$new_parent = false;
 		if ( $parent_id === null ) {
 			$parent_id = 0;
