@@ -27,6 +27,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use Joomla\String\StringHelper;
+use Joomla\CMS\Access\Exception\NotAllowed;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -37,41 +38,41 @@ defined('_JEXEC') or die('Restricted access');
  */
 class DisplayController extends BaseController
 {
-	/**
-	 * A noop function so this controller does not have a usable default
-	 */
-	public function noop()
-	{
-		$errmsg = Text::_('ATTACH_ERROR_NO_FUNCTION_SPECIFIED') . ' (ERR 0)';
-		throw new \Exception($errmsg, 500);
-	}
+    /**
+     * A noop function so this controller does not have a usable default
+     */
+    public function noop()
+    {
+        $errmsg = Text::_('ATTACH_ERROR_NO_FUNCTION_SPECIFIED') . ' (ERR 0)';
+        throw new \Exception($errmsg, 500);
+    }
 
 
-	/**
-	 * Method to get a model object, loading it if required.
-	 *
-	 * @param	string	The model name. Optional.
-	 * @param	string	The class prefix. Optional.
-	 * @param	array	Configuration array for model. Optional.
-	 * @return	object	The model.
-	 */
-	public function getModel($name = 'Attachments', $prefix = 'Site', $config = array())
-	{
-		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
-		return $model;
-	}
+    /**
+     * Method to get a model object, loading it if required.
+     *
+     * @param	string	The model name. Optional.
+     * @param	string	The class prefix. Optional.
+     * @param	array	Configuration array for model. Optional.
+     * @return	object	The model.
+     */
+    public function getModel($name = 'Attachments', $prefix = 'Site', $config = array())
+    {
+        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
+        return $model;
+    }
 
 
-	/**
-	 * Display a form for uploading a file/url
-	 */
-	public function upload()
-	{
-		// Access check.
-		$user = $this->app->getIdentity();
-		if ($user === null OR !$user->authorise('core.create', 'com_attachments')) {
-			throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 1)', 404);
-			}
+    /**
+     * Display a form for uploading a file/url
+     */
+    public function upload()
+    {
+        // Access check.
+        $user = $this->app->getIdentity();
+        if ($user === null || $user->id == 0 || !$user->authorise('core.create', 'com_attachments')){
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 1)', 403);
+        }
 
 		// Get the parent info
 		$input = $this->input;
@@ -220,8 +221,8 @@ class DisplayController extends BaseController
 
 		// Make sure that the user is logged in
 		$user = $this->app->getIdentity();
-        if ($user === null) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 67)', 404);
+		if ($user === null || $user->id == 0 || !$user->authorise('core.create', 'com_attachments')){
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 6)', 403);
         }
 
 		// Get the parameters
@@ -502,8 +503,8 @@ class DisplayController extends BaseController
 	{
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 65)', 404);
+        if ($user === null || $user->id == 0 || !$user->authorise('core.delete', 'com_attachments')){
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 66)', 403);
         }
 
 		$db = Factory::getContainer()->get('DatabaseDriver');
@@ -547,7 +548,7 @@ class DisplayController extends BaseController
 
 		// Check to make sure we can edit it
 		if ( !$parent->userMayDeleteAttachment($attachment) ) {
-			throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 16)', 404);
+		    throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 16)', 403);
 			}
 
 		// Make sure the parent exists
@@ -630,9 +631,10 @@ class DisplayController extends BaseController
 	{
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 66)', 404);
+        if ($user === null || $user->id == 0 || !$user->authorise('core.delete', 'com_attachments')){
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 67)', 403);
         }
+
 		$input = $this->input;
 		// Make sure we have a valid attachment ID
 		$attachment_id = $input->getInt('id');
@@ -705,8 +707,8 @@ class DisplayController extends BaseController
 
         // Access check.
         $user = $this->app->getIdentity();
-        if ($user === null) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 66)', 404);
+        if ($user === null || $user->id == 0 || !$user->authorise('core.edit', 'com_attachments')){
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 68)', 403);
         }
 
 		$input = $this->input;
@@ -748,7 +750,7 @@ class DisplayController extends BaseController
 
 		// Check to make sure we can edit it
 		if ( !$parent->userMayEditAttachment($attachment) ) {
-			throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR') . ' (ERR 27)', 404);
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR') . ' (ERR 27)', 403);
 			}
 
 		// Set up the entity name for display
