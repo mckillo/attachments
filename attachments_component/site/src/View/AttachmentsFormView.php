@@ -18,6 +18,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\WebAsset\WebAssetManager;
 
 // No direct access
 defined('_JEXEC') or die();
@@ -44,28 +45,30 @@ class AttachmentsFormView extends HtmlView
 		/** @var \Joomla\CMS\Application\CMSApplication $app */
 		$app = Factory::getApplication();
 		$document = $app->getDocument();
+		$wa = $document->getWebAssetManager();
 		$this->document = $document;
 
 		$this->template = $app->getTemplate(true)->template;
 		$template_dir = $this->baseurl.'/templates/'.$this->template;
 
 		$file ='/templates/system/css/system.css';
-		if (File::exists(JPATH_SITE.$file)) {
-			$document->addStyleSheet($this->baseurl.$file);
-			}
+		if (is_file(JPATH_SITE.$file)) {
+			$wa->registerAndUseStyle('system.css', $this->baseurl.$file);
+		}
 
 		// Try to add the typical template stylesheets
 		$files = Array('template.css', 'position.css', 'layout.css', 'general.css');
 		foreach($files as $file) {
 			$path = JPATH_SITE.'/templates/'.$this->template.'/css/'.$file;
-			if (File::exists($path)) {
-				$document->addStyleSheet($this->baseurl.'/templates/'.$this->template.'/css/'.$file);
-				}
+			if (is_file($path)) {
+				$wa->registerAndUseStyle($file, $this->baseurl.'/templates/'.$this->template.'/css/'.$file);
 			}
+		}
 
 		// Add the CSS for the attachments list (whether we need it or not)
-		HTMLHelper::stylesheet('media/com_attachments/css/attachments_list.css');
-		HTMLHelper::stylesheet('media/com_attachments/css/attachments_list_dark.css');
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa->registerAndUseStyle('com_attachments.list', 'com_attachments/css/attachments_list.css');
+		$wa->registerAndUseStyle('com_attachments.list', 'com_attachments/css/attachments_list_dark.css');
 
 		$head_renderer = new HeadRenderer($document);
 
