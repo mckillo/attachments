@@ -2,21 +2,20 @@
 <extension type="package" version="4.0" method="upgrade">
     <name>pkg_attachments</name>
     <packagename>attachments</packagename>
-    <version>4.1.2</version>
-    <creationDate>April  2, 2025</creationDate>
-    <copyright>(C) 2007-2024 Jonathan M. Cameron. All rights reserved.</copyright>
-    <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+    <version>4.1.6</version>
+    <creationDate>August  1, 2025</creationDate>
+    <copyright>(C) 2007-2025 Jonathan M. Cameron. All rights reserved.</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
     <author>Jonathan M. Cameron</author>
     <authorEmail>jmcameron@jmcameron.net</authorEmail>
-    <authorUrl>http://joomlacode.org/gf/project/attachments/</authorUrl>
+    <authorUrl>https://github.com/jmcameron/attachments</authorUrl>
     <packager>Jonathan M. Cameron</packager>
-    <packagerurl>http://joomlacode.org/gf/project/attachments/</packagerurl>
+    <packagerurl>https://github.com/jmcameron/attachments</packagerurl>
     <description>ATTACH_PACKAGE_ATTACHMENTS_FOR_JOOMLA_40PLUS</description>
 
     <scriptfile>install.attachments.php</scriptfile>
 
     <files folder="packages">
-        <file type="component" id="com_attachments">attachments_component.zip</file>
         <file type="plugin" id="attachments" group="content">attachments_plugin.zip</file>
         <file type="plugin" id="attachments" group="search">attachments_search.zip</file>
         <file type="plugin" id="framework" group="attachments">attachments_plugin_framework.zip</file>
@@ -27,6 +26,9 @@
         <file type="plugin" id="insert_attachments_token" group="editors-xtd">insert_attachments_token_btn_plugin.zip</file>
         <file type="plugin" id="attachments" group="quickicon">attachments_quickicon_plugin.zip</file>
         <file type="plugin" id="attachments" group="finder">attachments_finder_plugin.zip</file>
+
+        <!-- Attachments Component enables all plugins on first install so it should be last in this list -->
+        <file type="component" id="com_attachments">attachments_component.zip</file>
     </files>
     <languages>
         <language tag="en-GB">language/en-GB/en-GB.pkg_attachments.sys.ini</language>

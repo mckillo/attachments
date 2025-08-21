@@ -1,4 +1,4 @@
-VERSION = "4.1.2"
+VERSION = "4.1.6"
 VERSION2 = $(shell echo $(VERSION)|sed 's/ /-/g')
 ZIPFILE = attachments-$(VERSION2).zip
 
@@ -7,7 +7,7 @@ ZIPFILE = attachments-$(VERSION2).zip
 # (Otherwise it uses the current date.)
 # DATE = "February 19, 2011"
 
-all: parts $(ZIPFILE)
+all: parts $(ZIPFILE) fixsha
 
 INSTALLS = attachments_plugin \
 	   add_attachment_btn_plugin \
@@ -82,7 +82,7 @@ fixsha:
 	./fixsha.sh $(ZIPFILE) 'update_pkg.xml'
 
 fixcopyrights:
-	@find . \( -name '*.php' -o -name '*.ini' -o -name '*.xml' \) -exec ./fixcopyright {} \;
+	@find . \( -name '*.php' -o -name '*.ini' -o -name '*.xml' \) -exec ./fixcopyrights.sh {} \;
 
 check: 
 	find . -type f -exec grep -n '???' {} /dev/null \; | egrep -v -e '(\.git|\.zip|\.gif|\.png|\.org|plugin_manual|coverage_|/temp/)'

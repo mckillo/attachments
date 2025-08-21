@@ -1,4 +1,4 @@
-# attachments 4.1.1
+# attachments 4.1.6
 
 ## Quick Start
 
@@ -6,7 +6,41 @@ Download <a href="https://github.com/jmcameron/attachments/releases/latest" targ
 
 ## Requirements
 
-Joomla 4.0+ compatible also with Joomla 5.0+
+Joomla 4.0+ ; the extensions is also compatible with Joomla 5.0+
+
+
+## 2025-08-01 version 4.1.6
+
+- fix issue [#140](/../../issues/140) Accessibility issue
+- fix issue [#145](/../../issues/145) The add attachment link on the articles of the front page does not correspond to the right article
+- Fix model ids for adding, editing, deleting attachments [#146](/../../pull/146)
+- Remove some unknown legacy code
+- Fixes for installation [#140](/../../pull/140)
+- Fixes some links in copyrights
+- Fixes for JED Checker warnings
+- Fix issue [#150](/../../issues/150) Missing attachments.xml brakes joomla 
+
+
+## 2025-06-22 version 4.1.5
+
+- fix issue [#137](/../../issues/137) PSR12 compatibility
+
+## 2025-06-22 version 4.1.4
+
+- Introduce new extended filtering, new backend list visualisation that is more coherent with Joomla! interface, 
+  introduce bootstrap styling to list and filtering controls.
+- fix issue [#135](/../../issues/135)  Cannot add attachment to category
+
+**Notes:**
+- Searching attachments using the id has changed in the backend. You can now use id: to find an attachment using its id.
+
+## 2025-06-22 version 4.1.3
+
+- fix issue [#119](/../../issues/119) Install - checksum verification failed
+- fix issue [#121](/../../issues/121) Accessibility warning
+- Fix issue [#125](/../../issues/125) Wrong variables names
+- Fix issue [#128](/../../issues/128) Verify URL existence is not working
+- Adding FontAwesome feature - alternative for legacy gif icons.
 
 ## 2025-04-02 version 4.1.2
 
