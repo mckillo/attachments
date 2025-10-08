@@ -1572,7 +1572,9 @@ class AttachmentsHelper
         $attachment = $model->getAttachment();
         if (!$attachment) {
             $errmsg = Text::sprintf('ATTACH_ERROR_INVALID_ATTACHMENT_ID_N', $id) . ' (ERR 41)';
-            throw new \Exception($errmsg, 500);
+            Factory::getApplication()->enqueueMessage($errmsg,'warning');
+			ob_clean();
+	        return true; 
         }
         $parent_id = $attachment->parent_id;
         $parent_type = $attachment->parent_type;
