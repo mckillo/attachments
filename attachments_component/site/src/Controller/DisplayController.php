@@ -479,9 +479,9 @@ class DisplayController extends BaseController
     {
         // Get the attachment ID
         $id = $this->input->getInt('id');
-        if (!is_numeric($id)) {
+        if ($id <= 0) {
             $errmsg = Text::sprintf('ATTACH_ERROR_INVALID_ATTACHMENT_ID_N', $id) . ' (ERR 12)';
-            throw new \Exception($errmsg, 500);
+            throw new \Exception($errmsg, 400);
         }
         $raw = $this->input->getInt('raw', 0);
         $popup = $this->input->getInt('popup', 0);
