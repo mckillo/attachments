@@ -231,58 +231,55 @@ for ($i = 0, $n = count($attachments); $i < $n; $i++) {
             }
         }
 
-        $show_in_modal = (!$app->client->mobile) &&
-                         ($this->file_link_open_mode == 'in_a_popup') &&
+        $show_in_modal = ($this->file_link_open_mode == 'in_a_popup') &&
                          ($attachment->file_type === "application/pdf" ||
                           str_starts_with($attachment->file_type, "text/") ||
                           str_starts_with($attachment->file_type, "image/"));
 
-        if ($show_in_modal) {
-            $a_class = 'modal-button';
-            AttachmentsJavascript::setupModalJavascript();
+        AttachmentsJavascript::setupModalJavascript();
 
-            $randomId = base64_encode('show' . $attachment->id . $actual_filename);
-            // Remove +,/,= from the $randomId
-            $randomId = strtr($randomId, "+/=", "AAA");
-            $modalParams['title']  = $this->escape($tooltip);
-            $modalParams['url']    = $url;
-            $modalParams['height'] = '80%';
-            $modalParams['width']  = '80%';
-            $modalParams['bodyHeight'] = '80';
-            $modalParams['modalWidth'] = '80';
-            if ($this->secure) {
-                $url .= "&popup=1";
-            }
+        $randomId = base64_encode('show' . $attachment->id . $actual_filename);
+        // Remove +,/,= from the $randomId
+        $randomId = strtr($randomId, "+/=", "AAA");
+        $modalParams['title']  = $this->escape($tooltip);
+        $modalParams['url']    = $url;
+        $modalParams['height'] = '60vh';
+        $modalParams['width']  = '100%';
+        $modalParams['bodyHeight'] = '80';
+        $modalParams['modalWidth'] = '80';
+        if ($this->secure) {
+            $url .= "&popup=1";
+        }
+        /* do not add modal if not needed */
+        if ($show_in_modal) {
             $html .= LayoutHelper::render(
                 'libraries.html.bootstrap.modal.main',
                 [
                     'selector' => 'modal-' . $randomId,
-                    'body' => "<iframe src=\"$url\" scrolling=\"auto\" loading=\"lazy\" width='95%' height='95%'>
+                    'body' => "<iframe
+                                src=\"$url\"
+                                scrolling=\"auto\"
+                                loading=\"lazy\">
                                </iframe>",
                     'params' => $modalParams
                 ]
             );
+        }
 
-            $show_link = "<a class=\"$a_class\"
-                             type=\"button\" data-bs-toggle='modal'
-                             data-bs-target='#modal-$randomId'";
-            $show_link .= "title=\"$tooltip\">";
-            if ($this->use_fontawesome_icons) {
-                $show_link .= '<i class="' . $faIconsStyle . ' ' . $icon . '"></i>';
-            } else {
-                $show_link .= HTMLHelper::image('com_attachments/file_icons/' . $icon, null, null, true);
-            }
-            $show_link .= "&nbsp;" . $filename . "</a>";
+        if ($show_in_modal) {
+            $a_class = 'attachment modal-button';
         } else {
             $a_class = 'at_icon';
-            $show_link = "<a class=\"" . $a_class . "\" href=\"$url\"$target title=\"$tooltip\">";
-            if ($this->use_fontawesome_icons) {
-                $show_link .= '<i class="' . $faIconsStyle . ' ' . $icon . '"></i>';
-            } else {
-                $show_link .= HTMLHelper::image('com_attachments/file_icons/' . $icon, null, null, true);
-            }
-            $show_link .= "&nbsp;" . $filename . "</a>";
         }
+
+        $show_link = "<a class=\"" . $a_class . "\" href=\"$url\"$target data-bs-target='#modal-$randomId' title=\"$tooltip\">";
+        if ($this->use_fontawesome_icons) {
+            $show_link .= '<i class="' . $faIconsStyle . ' ' . $icon . '"></i>';
+        } else {
+            $show_link .= HTMLHelper::image('com_attachments/file_icons/' . $icon, null, null, true);
+        }
+        $show_link .= "&nbsp;" . $filename . "</a>";
+
         $html .= $show_link;
         if (($attachment->uri_type == 'url') && $this->superimpose_link_icons) {
             if ($attachment->url_valid) {
@@ -410,6 +407,8 @@ for ($i = 0, $n = count($attachments); $i < $n; $i++) {
         $html .= '<td class="at_file_size">' . $file_size_str . '</td>';
     }
     if ($this->show_raw_download &&  $show_in_modal) {
+        // avoid beeing scanned by javascript it is not a modal link
+        $a_class = 'at_icon';
         $url = Route::_($base_url .
                         "index.php?option=com_attachments&task=download&id=" .
                         (int)$attachment->id . "&raw=1");
@@ -464,7 +463,7 @@ for ($i = 0, $n = count($attachments); $i < $n; $i++) {
         $randomId = strtr($randomId, "+/=", "AAA");
         $modalParams['title']  = $this->escape($tooltip);
         $modalParams['url']    = $update_url;
-        $modalParams['height'] = '100%';
+        $modalParams['height'] = '60vh';
         $modalParams['width']  = '100%';
         $modalParams['bodyHeight'] = 75;
         $modalParams['modalWidth'] = 80;
@@ -472,7 +471,11 @@ for ($i = 0, $n = count($attachments); $i < $n; $i++) {
             'libraries.html.bootstrap.modal.main',
             [
                 'selector' => 'modal-' . $randomId,
-                'body' => "<iframe src=\"$update_url\" scrolling=\"yes\" loading=\"lazy\"></iframe>",
+                'body' => "<iframe
+                            src=\"$update_url\"
+                            scrolling=\"yes\"
+                            loading=\"lazy\">
+                           </iframe>",
                 'params' => $modalParams
             ]
         );
@@ -506,10 +509,10 @@ for ($i = 0, $n = count($attachments); $i < $n; $i++) {
             'libraries.html.bootstrap.modal.main',
             [
                 'selector' => 'modal-' . $randomId,
-                'body' => "<iframe width=\"100%\"
-                            height=\"200\"
+                'body' => "<iframe
                             src=\"$delete_url\"
-                            scrolling=\"yes\" loading=\"lazy\">
+                            scrolling=\"yes\"
+                            loading=\"lazy\">
                           </iframe>",
                 'params' => $modalParams
             ]
@@ -534,6 +537,9 @@ for ($i = 0, $n = count($attachments); $i < $n; $i++) {
 
 // Close the HTML
 $html .= "</tbody></table>\n";
+
+// If attachments should be opened in a popup on desktop, modify the links
+AttachmentsJavascript::modifyLinksForDesktop();
 
 if ($format != 'raw') {
     $html .= "</div>\n";

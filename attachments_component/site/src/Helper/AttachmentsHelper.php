@@ -928,6 +928,13 @@ class AttachmentsHelper
         // Add the icon file type
         $attachment->icon_filename = AttachmentsFileTypes::iconFilename($filename, $ftype);
 
+        $app->triggerEvent('onContentBeforeSave', [
+            'com_attachments.attachment',
+            $attachment,
+            $attachment_id === false ? true : false,
+            $attachment->getProperties()
+        ]);
+
         // Save the updated attachment
         if (!$attachment->store()) {
             $errmsg = Text::_('ATTACH_ERROR_SAVING_FILE_ATTACHMENT_RECORD') . $attachment->getError() . ' (ERR 37)';
@@ -1528,6 +1535,13 @@ class AttachmentsHelper
             throw new \Exception($errmsg, 500);
         }
 
+        $app->triggerEvent('onContentBeforeSave', [
+            'com_attachments.attachment',
+            $attachment,
+            $attachment_id === false ? true : false,
+            $attachment->getProperties()
+        ]);
+        
         // Save the updated attachment
         if (!$attachment->store()) {
             $errmsg = Text::_('ATTACH_ERROR_SAVING_URL_ATTACHMENT_RECORD') . $attachment->getError() . ' (ERR 40)';
@@ -2008,16 +2022,19 @@ class AttachmentsHelper
         $randomId = strtr($randomId, "+/=", "AAA");
         $modalParams['title']  = $tooltip === null ? '' : htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8');
         $modalParams['url']    = $url;
-        $modalParams['height'] = '100%';
+        $modalParams['height'] = '60vh';
         $modalParams['width']  = '100%';
-        $modalParams['bodyHeight'] = 75;
+        $modalParams['bodyHeight'] = 80;
         $modalParams['modalWidth'] = 80;
         $links = LayoutHelper::render(
             'libraries.html.bootstrap.modal.main',
             [
                 'selector' => 'modal-' . $randomId,
-                'body' => "<iframe width=\"100%\" height=\"600\" src=\"$url\" scrolling=\"auto\" loading=\"lazy\">
-                           </iframe>",
+                'body' => "<iframe
+                            src=\"$url\"
+                            scrolling=\"auto\"
+                            loading=\"lazy\">
+                            </iframe>",
                 'params' => $modalParams
             ]
         );

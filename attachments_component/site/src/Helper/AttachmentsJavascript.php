@@ -65,11 +65,11 @@ class AttachmentsJavascript
 
 
     /**
-     * Set up the Javascript for the modal button
+     * Set up the Javascript for the modal button selector is the selector of the modal
      */
     public static function setupModalJavascript()
     {
-        HTMLHelper::_('bootstrap.modal', 'a.modal-button');
+        HTMLHelper::_('bootstrap.modal', '.joomla-modal');
     }
 
 
@@ -83,5 +83,21 @@ class AttachmentsJavascript
                     myparent.document.querySelector(\'.joomla-modal.show\')).hide();
                 myparent.location.reload();
                </script>';
+    }
+
+    public static function modifyLinksForDesktop(): void
+    {
+        echo '<script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+                if (!/mobi|android|webos|iphone|ipad|ipod|blackberry|opera mini/i.test(navigator.userAgent)) {
+                    const links = document.querySelectorAll("a.attachment.modal-button");
+                    links.forEach(function(link) {
+                        link.removeAttribute("href");
+                        link.setAttribute("type", "button");
+                        link.setAttribute("data-bs-toggle", "modal");
+                    });
+                }
+            });
+            </script>';
     }
 }
