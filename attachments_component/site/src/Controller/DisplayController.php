@@ -478,15 +478,23 @@ class DisplayController extends BaseController
     public function download()
     {
         // Get the attachment ID
-        $id = $this->input->getInt('id');
+        $id = $this->input->getInt('id', 0);
         if ($id <= 0) {
             $errmsg = Text::sprintf('ATTACH_ERROR_INVALID_ATTACHMENT_ID_N', $id) . ' (ERR 12)';
-            throw new \Exception($errmsg, 400);
+            $this->setRedirect(Uri::root(), $errmsg, 'error');
+            return false;
         }
         $raw = $this->input->getInt('raw', 0);
         $popup = $this->input->getInt('popup', 0);
         // NOTE: The helper downloadAttachment($id) function does the access check
-        AttachmentsHelper::downloadAttachment($id, $raw, $popup);
+        if (!AttachmentsHelper::downloadAttachment($id, $raw, $popup)) {
+			$targetUrl = Uri::root();
+			if (!empty($fallback)) {
+                $targetUrl = Route::_($fallback);
+            }
+            $this->setRedirect($targetUrl);
+            return false;
+        }
     }
 
 

@@ -1588,7 +1588,7 @@ class AttachmentsHelper
             $errmsg = Text::sprintf('ATTACH_ERROR_INVALID_ATTACHMENT_ID_N', $id) . ' (ERR 41)';
             Factory::getApplication()->enqueueMessage($errmsg,'warning');
 			ob_clean();
-	        return true; 
+            return false;
         }
         $parent_id = $attachment->parent_id;
         $parent_type = $attachment->parent_type;
@@ -1599,7 +1599,8 @@ class AttachmentsHelper
         $apm = AttachmentsPluginManager::getAttachmentsPluginManager();
         if (!$apm->attachmentsPluginInstalled($parent_type)) {
             $errmsg = Text::sprintf('ATTACH_ERROR_UNKNOWN_PARENT_TYPE_S', $parent_type) . ' (ERR 42)';
-            throw new \Exception($errmsg, 500);
+            Factory::getApplication()->enqueueMessage($errmsg, 'error');
+            return false;
         }
         $parent = $apm->getAttachmentsPlugin($parent_type);
 
@@ -1619,12 +1620,14 @@ class AttachmentsHelper
                     $return = $app->getUserState('com_attachments.current_url', '');
                     $redirect_to = Route::_($base_url . 'index.php?option=com_attachments&task=requestLogin' . $return);
                     $app->redirect($redirect_to);
+                    return false;
                 }
             }
 
             // Otherwise, just error out
             $errmsg = Text::_('ATTACH_ERROR_NO_PERMISSION_TO_DOWNLOAD') . ' (ERR 43)';
-            throw new \Exception($errmsg, 500);
+            Factory::getApplication()->enqueueMessage($errmsg, 'error');
+            return false;
         }
 
         // Get the other info about the attachment
@@ -1638,7 +1641,8 @@ class AttachmentsHelper
             // Make sure the file exists
             if (!File::exists($filename_sys)) {
                 $errmsg = Text::sprintf('ATTACH_ERROR_FILE_S_NOT_FOUND_ON_SERVER', $filename) . ' (ERR 44)';
-                throw new \Exception($errmsg, 500);
+                Factory::getApplication()->enqueueMessage($errmsg, 'error');
+                return false;
             }
             $file_size = filesize($filename_sys);
 
@@ -1689,6 +1693,7 @@ class AttachmentsHelper
             header("Content-Disposition: " . $content_disposition . "; filename=\"$mod_filename\"");
             header('Content-Transfer-Encoding: binary');
             header("Content-Type: $content_type");
+            header("X-Content-Type-Options: nosniff");
 
             // If x-sendfile is available, use it
             $using_ssl = strtolower(substr($base_url, 0, 5)) == 'https';
@@ -1706,10 +1711,13 @@ class AttachmentsHelper
                 // Send it in 8K chunks
                 set_time_limit(0);
                 $file = @fopen($filename_sys, "rb");
-                while (!feof($file) and (connection_status() == 0)) {
-                    print(@fread($file, 8 * 1024));
-                    ob_flush();
-                    flush();
+                if ($file) {
+                    while (!feof($file) and (connection_status() == 0)) {
+                        print(@fread($file, 8 * 1024));
+                        ob_flush();
+                        flush();
+                    }
+                    @fclose($file);
                 }
             }
             exit;
@@ -1720,7 +1728,10 @@ class AttachmentsHelper
             // Forward to the URL
             ob_clean(); // Clear any previously written headers in the output buffer
             header("Location: {$attachment->url}");
+            exit;
         }
+
+        return false;
     }
 
 
