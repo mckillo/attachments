@@ -613,7 +613,8 @@ class DisplayController extends BaseController
                 $parent_entity,
                 $pid,
                 $lang,
-                $from
+                $from,
+                false
             );
             exit();
         } else {
